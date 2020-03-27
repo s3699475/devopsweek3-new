@@ -11,7 +11,25 @@ jobs:
           steps: 
             - run: npm install 
             - run: npm test 
+  pack:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm pack
+            - store_artifacts:
+                path: ./
 workflows: 
     build-and-test: 
       jobs: 
         - build-and-test 
+        - pack:
+            requires:
+              - build-and-test
+            filters:
+              branches:
+                only:
+                  - master
